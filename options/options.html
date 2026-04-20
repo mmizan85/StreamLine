@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StreamLine Settings</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <div>
+          <p class="hero__eyebrow">StreamLine</p>
+          <h1>Live media settings</h1>
+          <p class="hero__copy">
+            Every change is saved to Chrome storage and pushed live to open tabs.
+          </p>
+        </div>
+
+        <div class="hero__actions">
+          <button class="ghost-button" id="btn-shortcuts">Manage shortcuts</button>
+          <button class="accent-button" id="btn-reset">Reset defaults</button>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="card">
+          <h2>Audio Effects</h2>
+
+          <label class="field">
+            <span>Volume boost <strong id="boost-value">100%</strong></span>
+            <input type="range" id="volume-boost" min="100" max="300" step="5" value="100" />
+          </label>
+
+          <label class="field">
+            <span>Equalizer preset</span>
+            <select id="eq-preset"></select>
+          </label>
+
+          <div class="toggle-row">
+            <div>
+              <span>Speech enhancer</span>
+              <p>Balances voice-heavy content in real time.</p>
+            </div>
+            <button class="toggle" id="toggle-speech" role="switch" aria-checked="false"></button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Playback</h2>
+
+          <label class="field">
+            <span>Default playback speed</span>
+            <select id="default-speed"></select>
+          </label>
+
+          <div class="toggle-row">
+            <div>
+              <span>Night mode</span>
+              <p>Adds a warm filter to video playback.</p>
+            </div>
+            <button class="toggle" id="toggle-night" role="switch" aria-checked="false"></button>
+          </div>
+
+          <label class="field">
+            <span>Night mode intensity <strong id="night-value">30%</strong></span>
+            <input type="range" id="night-opacity" min="10" max="60" step="5" value="30" />
+          </label>
+        </section>
+
+        <section class="card">
+          <h2>Silence Detection</h2>
+
+          <div class="toggle-row">
+            <div>
+              <span>Auto-skip silence</span>
+              <p>Detects quiet sections and skips them on the active media element.</p>
+            </div>
+            <button class="toggle" id="toggle-silence" role="switch" aria-checked="false"></button>
+          </div>
+
+          <label class="field">
+            <span>Threshold <strong id="silence-threshold-value">0.02</strong></span>
+            <input type="range" id="silence-threshold" min="1" max="10" step="1" value="2" />
+          </label>
+
+          <label class="field">
+            <span>Skip distance <strong id="silence-padding-value">0.5s</strong></span>
+            <input type="range" id="silence-padding" min="1" max="20" step="1" value="5" />
+          </label>
+        </section>
+
+        <section class="card">
+          <h2>Automation</h2>
+
+          <div class="toggle-row">
+            <div>
+              <span>Multi-tab sync</span>
+              <p>Pause other tabs when one tab starts playing.</p>
+            </div>
+            <button class="toggle" id="toggle-sync" role="switch" aria-checked="true"></button>
+          </div>
+
+          <p class="note">
+            Media detection now rescans accessible frames, open shadow roots, and late DOM injections automatically.
+          </p>
+        </section>
+        <section class="card">
+          <div class="about-page" id="about-page">
+        
+            <h2>About StreamLine</h2>
+            <p>
+              StreamLine is a Chrome extension that applies real-time audio and video effects to media elements. It works on any website with media content, including nested frames and shadow DOMs.
+            </p>
+            <p>
+              All processing is done locally in your browser using the Web Audio API and CSS filters. No media data is sent to external servers.
+            </p>
+            <p>
+              This project is open source on <a href="www.github.com/mmizan85/streamline" target="_blank">GitHub</a>. Contributions and feedback are welcome!
+            </p>
+            <h4>Developed by</h4>
+            <p>
+               <h5>Mohammod Miza</h5> with contributions from the open-source community.
+            </p>
+          </div>
+          <div class="custom-eq" id="custom-eq-container" style="display: none;">
+            <h2>Custom Equalizer</h2>
+            <div class="custom-eq__header">
+              <span>Custom EQ</span>
+              <button class="pill-button" id="btn-save-eq">Save Preset</button>
+            </div>
+            <div class="custom-eq__sliders" id="custom-eq-sliders"></div>
+          </div>
+        </section>
+      </main>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </div>
+
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

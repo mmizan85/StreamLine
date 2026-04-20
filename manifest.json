@@ -1,0 +1,78 @@
+{
+  "manifest_version": 3,
+  "name": "StreamLine - Media Management Hub",
+  "version": "1.1.0",
+  "description": "A centralized hub to control, boost, and synchronize audio and video across your browser tabs.",
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "32": "assets/icons/icon32.png",
+      "48": "assets/icons/icon48.png",
+      "128": "assets/icons/icon128.png"
+    },
+    "default_title": "StreamLine"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "permissions": ["activeTab", "storage", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/content.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
+    }
+  ],
+  "commands": {
+    "global-play-pause": {
+      "suggested_key": {
+        "default": "Alt+Shift+Space",
+        "mac": "Alt+Shift+Space"
+      },
+      "description": "Play or pause media in the active tab",
+      "global": true
+    },
+    "global-volume-up": {
+      "suggested_key": {
+        "default": "Alt+Shift+Up"
+      },
+      "description": "Increase volume by 10%",
+      "global": true
+    },
+    "global-volume-down": {
+      "suggested_key": {
+        "default": "Alt+Shift+Down"
+      },
+      "description": "Decrease volume by 10%",
+      "global": true
+    },
+    "toggle-pip": {
+      "suggested_key": {
+        "default": "Alt+Shift+P"
+      },
+      "description": "Toggle Picture-in-Picture",
+      "global": false
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["content/injected.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

@@ -1,0 +1,753 @@
+/* ============================================================================
+   popup.css — StreamLine v2 · Glassmorphism Redesign
+   Design language: deep space gradient background · frosted glass cards
+   Accent: violet (#a78bfa / #7c3aed) · Width: 400px fixed
+   ============================================================================ */
+
+/* ── Reset ──────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Design tokens ──────────────────────────────────────────────────────────── */
+:root {
+  /* Accent — violet spectrum */
+  --a:       #a78bfa;   /* Base accent */
+  --a-light: #c4b5fd;   /* Hover / highlight */
+  --a-deep:  #7c3aed;   /* Gradient start */
+  --a-dim:   rgba(167,139,250,.22);
+  --a-glow:  rgba(167,139,250,.16);
+
+  /* Surfaces */
+  --glass-bg:     rgba(255,255,255,.065);
+  --glass-bg-hi:  rgba(255,255,255,.095);
+  --glass-border: rgba(255,255,255,.11);
+  --glass-top:    rgba(255,255,255,.16); /* Top edge highlight */
+  --hover-bg:     rgba(255,255,255,.05);
+  --active-bg:    rgba(255,255,255,.09);
+
+  /* Text */
+  --t1: rgba(255,255,255,.93);
+  --t2: rgba(255,255,255,.56);
+  --t3: rgba(255,255,255,.30);
+
+  /* Radii */
+  --r-card: 18px;
+  --r-item: 12px;
+  --r-sm:    7px;
+  --r-pill: 999px;
+
+  /* Blur */
+  --blur: blur(24px) saturate(1.25);
+
+  /* Transitions */
+  --tf: 130ms ease;
+  --tm: 220ms cubic-bezier(.4,0,.2,1);
+}
+
+/* ── Base ────────────────────────────────────────────────────────────────────── */
+html { width: 400px; }
+
+body {
+  width: 400px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--t1);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  /* Deep space background — static gradient, never a thumbnail */
+  background: linear-gradient(158deg, #0d0d21 0%, #19102e 42%, #0c1929 100%);
+}
+
+/* ── App shell ──────────────────────────────────────────────────────────────── */
+#app {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px 14px;
+  gap: 8px;
+  /* Fade + slide-up on popup open */
+  animation: app-in .28s cubic-bezier(.4,0,.2,1) both;
+}
+
+@keyframes app-in {
+  from { opacity: 0; transform: translateY(7px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Glassmorphism card base ────────────────────────────────────────────────── */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 0.5px solid var(--glass-border);
+  border-radius: var(--r-card);
+  /* Layered shadow for depth + top-edge glow */
+  box-shadow:
+    0 8px 36px rgba(0,0,0,.42),
+    inset 0 0.5px 0 var(--glass-top);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle corner light glint — key glassmorphism detail */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 58%; height: 52%;
+  background: radial-gradient(
+    ellipse at top left,
+    rgba(255,255,255,.045),
+    transparent 68%
+  );
+  border-radius: var(--r-card) 0 0 0;
+  pointer-events: none;
+}
+
+/* ── Topbar ──────────────────────────────────────────────────────────────────── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 34px;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.logo-icon {
+  width: 20px; height: 13px;
+  fill: var(--a);
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: .025em;
+  color: var(--t1);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Sync pill */
+.sync-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 13px;
+  background: transparent;
+  border: 0.5px solid var(--glass-border);
+  border-radius: var(--r-pill);
+  font-size: 10.5px;
+  color: var(--t3);
+  cursor: pointer;
+  transition: all var(--tf);
+}
+.sync-pill:hover { background: var(--hover-bg); }
+.sync-pill[aria-checked="true"] {
+  background: var(--a-glow);
+  border-color: var(--a-dim);
+  color: var(--a-light);
+}
+
+.sync-dot {
+  width: 6.5px; height: 6.5px;
+  border-radius: 50%;
+  background: var(--t3);
+  transition: background var(--tf);
+  flex-shrink: 0;
+}
+.sync-pill[aria-checked="true"] 
+.sync-dot { background: var(--a); }
+
+/* Settings icon button */
+.icon-btn {
+  width: 30px; 
+  height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  /* background: transparent; */
+  border: none;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  color: var(--t3);
+  transition: all var(--tf) transform 0.6s;
+  margin-right: 10px;
+  background: var(--hover-bg); 
+  color: var(--t2)
+}
+.icon-btn:hover { 
+  background: var(--glass-bg-hi); 
+  color: var(--t2) ;
+}
+.icon-btn svg   { width: 20px; height: 20px; fill: currentColor; }
+.icon-btn svg:hover { transform: scale(1.1) rotate(90deg); }
+
+/* ── CSS tooltip ──────────────────────────────────────────────────────────────── */
+[data-tip] { position: relative; }
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 9px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,.82);
+  color: rgba(255,255,255,.88);
+  font-size: 11px;
+  padding: 4px 9px;
+  border-radius: 7px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  /* Short delay so tooltip only shows on intentional hover, not on click-through */
+  transition: opacity .14s .35s;
+  z-index: 99;
+}
+[data-tip]:hover::after { opacity: 1; }
+
+/* ── Views ───────────────────────────────────────────────────────────────────── */
+.view { display: none; }
+
+#view-loading:not([hidden]) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 140px;
+}
+
+#view-empty:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 180px;
+  padding: 32px 20px;
+  text-align: center;
+}
+
+#view-active:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: app-in .3s .05s cubic-bezier(.4,0,.2,1) both;
+}
+
+/* Loading spinner */
+.spinner-ring {
+  width: 30px; height: 30px;
+  border: 2px solid rgba(255,255,255,.08);
+  border-top-color: var(--a);
+  border-radius: 50%;
+  animation: spin .85s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Empty state */
+.empty-art svg {
+  width: 56px; height: 56px;
+  color: var(--t3);
+}
+.empty-title {
+  font-size: 14px; font-weight: 500;
+  color: var(--t2);
+}
+.empty-body {
+  font-size: 12px; color: var(--t3);
+  max-width: 220px; line-height: 1.55;
+}
+
+/* ════════════════════════════════════════════════════════
+   PRIMARY CARD
+════════════════════════════════════════════════════════ */
+.pc {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Top row: thumbnail + meta ──────────────────────────────── */
+.pc-top {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+}
+
+/* Thumbnail shell — fixed 108×108 square, never distorts */
+.pc-thumb-shell {
+  width: 108px;
+  height: 108px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: rgba(255,255,255,.06);
+  border: 0.5px solid var(--glass-border);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pc-thumb-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Always fills, never squishes */
+  display: block;
+}
+
+.pc-thumb-icon {
+  color: var(--t3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pc-thumb-icon svg { width: 46px; height: 46px; }
+
+/* Meta column */
+.pc-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 1px;
+}
+
+.pc-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--t1);
+  line-height: 1.36;
+  /* Allow up to 3 lines before ellipsis */
+  display: -webkit-box;
+  /* -webkit-line-clamp: 3; */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pc-source {
+  font-size: 11px;
+  color: var(--t2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── EQ Frequency Visualizer ────────────────────────────────── */
+/*
+  7 bars. Each bar:
+    • default: collapsed to 8% of its height (almost invisible flat line)
+    • .is-playing on parent #eq-viz → CSS animation kicks in per bar
+    • Duration & delay are set per bar via CSS custom props (--d, --dl)
+    • transform-origin: bottom center so bars grow upward from baseline
+*/
+.eq-viz {
+  display: flex;
+  align-items: flex-end;
+  gap: 3.5px;
+  height: 22px;
+  margin-top: 8px;
+}
+
+.eq-bar {
+  display: inline-block;
+  width: 3px;
+  height: 22px;
+  border-radius: 2px;
+  background: linear-gradient(to top, var(--a-deep), var(--a-light));
+  transform: scaleY(.08);
+  transform-origin: bottom center;
+  opacity: .55;
+  /* Smooth collapse when pausing */
+  transition: transform .4s ease, opacity .4s ease;
+}
+
+/* Playing: activate per-bar animation */
+.eq-viz.is-playing .eq-bar {
+  opacity: .9;
+  animation: eq-dance var(--d, .85s) ease-in-out infinite var(--dl, 0s);
+  /* Remove the collapse transition while animating */
+  transition: opacity .2s ease;
+}
+
+@keyframes eq-dance {
+  0%   { transform: scaleY(.08); }
+  18%  { transform: scaleY(.72); }
+  35%  { transform: scaleY(.45); }
+  52%  { transform: scaleY(1.00); }
+  68%  { transform: scaleY(.55); }
+  83%  { transform: scaleY(.80); }
+  100% { transform: scaleY(.08); }
+}
+
+/* ── Seek bar ─────────────────────────────────────────────────── */
+.seek-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.seek-time {
+  font-size: 10px;
+  color: var(--t2);
+  min-width: 30px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
+  flex-shrink: 0;
+}
+.seek-time--r { text-align: right; }
+
+.seek-track {
+  flex: 1;
+  height: 3px;
+  background: rgba(255,255,255,.13);
+  border-radius: var(--r-pill);
+  position: relative;
+  cursor: pointer;
+  /* Expanded hit-target without changing visual size */
+  padding: 9px 0;
+  margin: -9px 0;
+}
+
+.seek-fill {
+  position: absolute;
+  top: 0; left: 0;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--a-deep), var(--a));
+  border-radius: var(--r-pill);
+  pointer-events: none;
+  transition: width .5s linear;
+}
+/* Disable smooth transition while dragging for 1:1 tracking */
+.seek-track.is-dragging .seek-fill { transition: none; }
+
+.seek-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-50%, -50%);
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 5px rgba(0,0,0,.45);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--tf), transform var(--tf);
+}
+.seek-track:hover .seek-thumb,
+.seek-track.is-dragging .seek-thumb { opacity: 1; }
+
+/* ── Control buttons ──────────────────────────────────────────── */
+
+/* Base */
+.ctrl-btn {
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.07);
+  border: 0.5px solid var(--glass-border);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--t1);
+  flex-shrink: 0;
+  transition: background var(--tf), transform .1s, box-shadow var(--tf);
+}
+.ctrl-btn:hover  { background: rgba(255,255,255,.12); }
+.ctrl-btn:active { transform: scale(.91); }
+.ctrl-btn svg    { fill: currentColor; flex-shrink: 0; }
+
+/* Medium (skip back / skip forward) */
+.ctrl-btn--md { width: 38px; height: 38px; }
+.ctrl-btn--md svg { width: 19px; height: 19px; }
+
+/* Primary (play/pause) — violet gradient, glow ring on hover */
+.ctrl-btn--primary {
+  width: 54px; height: 54px;
+  background: linear-gradient(138deg, var(--a-deep), var(--a));
+  border-color: transparent;
+  box-shadow: 0 4px 20px rgba(167,139,250,.30);
+}
+.ctrl-btn--primary:hover {
+  background: linear-gradient(138deg, var(--a), var(--a-light));
+  box-shadow: 0 4px 26px rgba(167,139,250,.42),
+              0 0 0 6px rgba(167,139,250,.10);
+}
+.ctrl-btn--primary svg { width: 21px; height: 21px; fill: #fff; }
+
+/* Small (mute, PiP) */
+.ctrl-btn--sm { width: 31px; height: 31px; }
+.ctrl-btn--sm svg { width: 15px; height: 15px; }
+
+/* PiP active */
+.ctrl-btn--sm[aria-pressed="true"] {
+  background: var(--a-glow);
+  border-color: var(--a-dim);
+  color: var(--a-light);
+}
+
+/* Main controls row */
+.ctrl-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* Secondary controls row */
+.ctrl-secondary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Volume slider wrapper */
+.vol-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.vol-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 3px;
+  background: rgba(255,255,255,.14);
+  border-radius: var(--r-pill);
+  outline: none;
+  cursor: pointer;
+}
+.vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 5px rgba(0,0,0,.45);
+  cursor: pointer;
+  transition: transform var(--tf);
+}
+.vol-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.vol-slider::-moz-range-thumb {
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+/* Speed badge */
+.speed-badge {
+  display: flex; align-items: center; justify-content: center;
+  min-width: 44px; height: 28px;
+  padding: 0 10px;
+  background: rgba(255,255,255,.07);
+  border: 0.5px solid var(--glass-border);
+  border-radius: var(--r-sm);
+  font-size: 11.5px; font-weight: 500;
+  color: var(--t2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--tf);
+}
+.speed-badge:hover        { background: rgba(255,255,255,.12); color: var(--t1); }
+.speed-badge.is-modified  { background: var(--a-glow); border-color: var(--a-dim); color: var(--a-light); }
+
+/* ════════════════════════════════════════════════════════
+   OTHER TABS SECTION
+   Conditionally hidden via [hidden] attribute set by JS.
+════════════════════════════════════════════════════════ */
+.other-tabs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: app-in .3s .12s cubic-bezier(.4,0,.2,1) both;
+}
+
+/* When the section has no [hidden] attribute */
+.other-tabs-section:not([hidden]) { display: flex; }
+
+.ot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3px;
+}
+
+.ot-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+
+.ot-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px; height: 15px;
+  padding: 0 4px;
+  background: rgba(255,255,255,.06);
+  border: 0.5px solid var(--glass-border);
+  border-radius: var(--r-pill);
+  font-size: 10px;
+  color: var(--t2);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.ot-pause-all-btn {
+  font-size: 11px;
+  color: var(--t3);
+  background: none; border: none;
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 5px;
+  transition: color var(--tf), background var(--tf);
+}
+.ot-pause-all-btn:hover { color: var(--t2); background: var(--hover-bg); }
+
+/* Other-tab list */
+.ot-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  /* Scroll if more than ~3.5 cards visible */
+  max-height: 184px;
+  overflow-y: auto;
+}
+.ot-list::-webkit-scrollbar { width: 4px; }
+.ot-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 2px; }
+
+/* ── Individual other-tab card ──────────────────────────────── */
+.ot-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 11px;
+  background: var(--glass-bg);
+  /* border: 0.5px solid var(--glass-border); */
+
+  box-shadow: inset 0 0 0 0.5px var(--glass-border);
+  overflow: hidden;
+
+  border-radius: var(--r-item);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: pointer;
+  transition: background var(--tf), border-color var(--tf);
+}
+.ot-item:hover { 
+  background: var(--glass-bg-hi); 
+  box-shadow: inset 0 0 0 0.5px rgba(255,255,255,.16); 
+}
+.ot-item[data-paused="true"] { 
+  border-color: rgba(255,255,255,.16); 
+}
+
+/*
+  Play/pause button: ALWAYS the first flex child.
+  flex-shrink: 0 ensures it NEVER collapses or shifts
+  regardless of thumbnail width or title length.
+*/
+.ot-play-btn {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.08);
+  border: 0.5px solid var(--glass-border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--t1);
+  flex-shrink: 0;   /* ← FIXED: button never moves */
+  transition: background var(--tf);
+}
+.ot-play-btn:hover  { background: rgba(255,255,255,.15); }
+.ot-play-btn:active { transform: scale(.9); }
+.ot-play-btn svg    { width: 11px; height: 11px; fill: currentColor; }
+
+/* Small thumbnail (16:9 ratio) */
+.ot-thumb-shell {
+  width: 52px; height: 30px;
+  border-radius: 5px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: rgba(255,255,255,.06);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.ot-thumb-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.ot-thumb-fallback { color: var(--t3); }
+.ot-thumb-fallback svg { width: 15px; height: 15px; fill: currentColor; }
+
+/* Info (title + subtitle) */
+.ot-info {
+  flex: 1;
+  min-width: 0; /* Required for text-overflow: ellipsis to work in flex child */
+}
+
+.ot-title {
+  font-size: 12px; font-weight: 500;
+  color: var(--t1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ot-sub {
+  font-size: 10.5px;
+  color: var(--t3);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+/* Green pulsing dot — only shown when playing */
+.live-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #4ade80;
+  flex-shrink: 0;
+  animation: dot-pulse 1.6s ease-in-out infinite;
+}
+.ot-item[data-paused="true"] .live-dot {
+  background: var(--t3);
+  animation: none;
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .25; }
+}
+
+/* ── Focus styles ─────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--a);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* Accessibility */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>StreamLine</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+
+<body>
+  <div id="app">
+
+    <!-- ═══════════════════════════════════════════════
+       TOPBAR
+  ═══════════════════════════════════════════════ -->
+    <header class="topbar">
+      <div class="logo">
+        <svg class="logo-icon" viewBox="0 0 24 16" aria-hidden="true">
+          <rect x="0" y="6" width="3" height="4" rx="1.5" />
+          <rect x="5" y="3" width="3" height="10" rx="1.5" />
+          <rect x="10" y="0" width="3" height="16" rx="1.5" />
+          <rect x="15" y="3" width="3" height="10" rx="1.5" />
+          <rect x="20" y="6" width="3" height="4" rx="1.5" />
+        </svg>
+        <span class="logo-text">StreamLine</span>
+      </div>
+
+      <div class="topbar-right">
+        <button id="btn-sync" class="sync-pill" role="switch" aria-checked="true" data-tip="Toggle multi-tab sync">
+          <span class="sync-dot" aria-hidden="true"></span>
+          <span class="sync-label">Sync</span>
+        </button>
+        <button id="btn-settings" class="icon-btn" data-tip="Settings" aria-label="Open settings">
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <path
+              d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zm6.28-2.06c.04-.29.06-.59.06-.94 0-.34-.02-.65-.07-.95l2.03-1.58c.18-.14.23-.4.12-.6l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L11.62.77A.49.49 0 0011.15.5H8.85a.49.49 0 00-.47.27L8.02 3.3c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L1.5 6.82c-.12.21-.07.47.12.61l2.03 1.58c-.05.3-.09.62-.09.99s.02.69.07.99L1.6 12.57c-.18.14-.23.4-.12.6l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.04.24.24.27.47.27h2.3c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.05-1.59z" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════
+       VIEW: LOADING
+  ═══════════════════════════════════════════════ -->
+    <div id="view-loading" class="view">
+      <div class="spinner">
+        <div class="spinner-ring"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+       VIEW: EMPTY
+  ═══════════════════════════════════════════════ -->
+    <div id="view-empty" class="view" hidden>
+      <div class="empty-art" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="26" stroke-width="1.5" stroke-dasharray="6 3" />
+          <rect x="21" y="22" width="7" height="20" rx="3.5" fill="currentColor" opacity=".35" />
+          <rect x="36" y="22" width="7" height="20" rx="3.5" fill="currentColor" opacity=".35" />
+          <line x1="18" y1="48" x2="46" y2="48" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+      </div>
+      <p class="empty-title">Nothing playing</p>
+      <p class="empty-body">Open a tab with video or audio and it will appear here.</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+       VIEW: ACTIVE
+  ═══════════════════════════════════════════════ -->
+    <div id="view-active" class="view" hidden>
+
+      <!-- ───────────────────────────────────────────
+         PRIMARY GLASS CARD
+    ─────────────────────────────────────────────── -->
+      <article id="primary-card" class="glass-card pc" aria-label="Primary media">
+
+        <!-- Top row: Thumbnail + Meta + EQ viz -->
+        <div class="pc-top">
+
+          <!-- Static thumbnail (poster / YouTube / favicon / icon fallback) -->
+          <div class="pc-thumb-shell" aria-hidden="true">
+            <img id="pc-thumb-img" class="pc-thumb-img" alt="" loading="lazy" hidden />
+            <div id="pc-thumb-icon" class="pc-thumb-icon">
+              <!-- Music note — displayed when no thumbnail is available -->
+              <svg viewBox="0 0 40 40" aria-hidden="true">
+                <path d="M30 5v19.1A6 6 0 1128 28V11.7L16 14.5V28.1A6 6 0 1114 32V13.7L30 5z" fill="currentColor"
+                  opacity=".5" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Meta: title, source, EQ bars -->
+          <div class="pc-meta">
+            <h2 id="pc-title" class="pc-title" title="">—</h2>
+            <p id="pc-source" class="pc-source">—</p>
+
+            <!--
+            EQ FREQUENCY VISUALIZER
+            7 bars with varied durations & delays so they move asynchronously.
+            The .is-playing class on #eq-viz activates the CSS animation.
+            When paused, bars sit flat at scaleY(0.08) via transform.
+            --d  = animation-duration  (makes each bar bounce at its own rate)
+            --dl = animation-delay     (staggers bar entry into the animation)
+          -->
+            <div id="eq-viz" class="eq-viz" aria-hidden="true">
+              <span class="eq-bar" style="--d:.82s;--dl:0s"></span>
+              <span class="eq-bar" style="--d:.63s;--dl:.11s"></span>
+              <span class="eq-bar" style="--d:1.0s;--dl:.06s"></span>
+              <span class="eq-bar" style="--d:.74s;--dl:.19s"></span>
+              <span class="eq-bar" style="--d:.91s;--dl:.14s"></span>
+              <span class="eq-bar" style="--d:.68s;--dl:.09s"></span>
+              <span class="eq-bar" style="--d:.85s;--dl:.22s"></span>
+              <span class="eq-bar" style="--d:.82s;--dl:0s"></span>
+              <span class="eq-bar" style="--d:.63s;--dl:.11s"></span>
+              <span class="eq-bar" style="--d:1.0s;--dl:.06s"></span>
+              <span class="eq-bar" style="--d:.74s;--dl:.19s"></span>
+              <span class="eq-bar" style="--d:.91s;--dl:.14s"></span>
+              <span class="eq-bar" style="--d:.68s;--dl:.09s"></span>
+              <span class="eq-bar" style="--d:.85s;--dl:.22s"></span>
+              <span class="eq-bar" style="--d:.82s;--dl:0s"></span>
+              <span class="eq-bar" style="--d:.63s;--dl:.11s"></span>
+              <span class="eq-bar" style="--d:1.0s;--dl:.06s"></span>
+              <span class="eq-bar" style="--d:.74s;--dl:.19s"></span>
+              <span class="eq-bar" style="--d:.91s;--dl:.14s"></span>
+              <span class="eq-bar" style="--d:.68s;--dl:.09s"></span>
+              <span class="eq-bar" style="--d:.85s;--dl:.22s"></span>
+            </div>
+          </div>
+
+        </div>
+        <!-- /pc-top -->
+
+        <!-- Seek bar -->
+        <div class="seek-row">
+          <span id="seek-cur" class="seek-time">0:00</span>
+          <div id="seek-track" class="seek-track" role="slider" tabindex="0" aria-label="Seek position"
+            aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0:00 of 0:00">
+            <div id="seek-fill" class="seek-fill"></div>
+            <div id="seek-thumb" class="seek-thumb" aria-hidden="true"></div>
+          </div>
+          <span id="seek-dur" class="seek-time seek-time--r">0:00</span>
+        </div>
+
+        <!-- ─── Main controls: Skip Back | Play/Pause | Skip Forward ─── -->
+        <div class="ctrl-main" role="group" aria-label="Playback controls">
+
+          <button id="btn-skip-back" class="ctrl-btn ctrl-btn--md" data-tip="Rewind 10 s"
+            aria-label="Rewind 10 seconds">
+            <!-- Circular arrow + "10" label — universally recognised skip icon -->
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12.5 3C8.4 3 4.9 5.5 3.4 9.1L1 6.7V12h5.3L3.7 9.4C5 6 8.5 3.8 12.5 3.8c4.8 0 8.7 3.9 8.7 8.7s-3.9 8.7-8.7 8.7c-3.5 0-6.5-2-8-5l-1.6 1C4.6 20.8 8.3 23.3 12.5 23.3 18.3 23.3 23 18.6 23 12.5S18.3 3 12.5 3z" />
+              <text x="12.5" y="17" font-size="6.5" text-anchor="middle" fill="currentColor"
+                font-family="system-ui,-apple-system" font-weight="700">10</text>
+            </svg>
+          </button>
+
+          <button id="btn-play-pause" class="ctrl-btn ctrl-btn--primary" aria-label="Play" aria-pressed="false">
+            <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true" style="display:none">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+            </svg>
+          </button>
+
+          <button id="btn-skip-fwd" class="ctrl-btn ctrl-btn--md" data-tip="Forward 10 s"
+            aria-label="Forward 10 seconds">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M11.5 3C15.6 3 19.1 5.5 20.6 9.1L23 6.7V12h-5.3l2.6-2.6C19 6 15.5 3.8 11.5 3.8c-4.8 0-8.7 3.9-8.7 8.7s3.9 8.7 8.7 8.7c3.5 0 6.5-2 8-5l1.6 1C19.4 20.8 15.7 23.3 11.5 23.3 5.7 23.3 1 18.6 1 12.5S5.7 3 11.5 3z" />
+              <text x="11.5" y="17" font-size="6.5" text-anchor="middle" fill="currentColor"
+                font-family="system-ui,-apple-system" font-weight="700">10</text>
+            </svg>
+          </button>
+
+
+        </div>
+        <!-- /ctrl-main -->
+
+        <!-- ─── Secondary controls: Mute | Volume | Speed | PiP ─── -->
+        <div class="ctrl-secondary" role="group" aria-label="Audio controls">
+
+          <button id="btn-mute" class="ctrl-btn ctrl-btn--sm" data-tip="Mute / Unmute" aria-label="Mute"
+            aria-pressed="false">
+            <!-- Volume-on icon -->
+            <svg id="icon-vol-on" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.06C15.48 15.29 16.5 13.77 16.5 12zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+            </svg>
+            <!-- Muted icon -->
+            <svg id="icon-vol-off" viewBox="0 0 24 24" aria-hidden="true" style="display:none">
+              <path
+                d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
+            </svg>
+          </button>
+
+          <div class="vol-wrap">
+            <input id="vol-slider" type="range" class="vol-slider" min="0" max="100" step="1" value="100"
+              aria-label="Volume" />
+          </div>
+
+          <button id="btn-speed" class="speed-badge" data-tip="Cycle speed · right-click to reset"
+            aria-label="Playback speed: 1.0×">
+            <span id="speed-val">1.0×</span>
+          </button>
+
+          <button id="btn-pip" class="ctrl-btn ctrl-btn--sm" data-tip="Picture-in-Picture (Alt+Shift+P)"
+            aria-label="Toggle Picture-in-Picture" aria-pressed="false" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M19 7H5c-1.1 0-2 .9-2 2v9c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm0 11H5V9h14v9zm-8 2h2V4H2v11h2V6h7v14z" />
+            </svg>
+          </button>
+
+        </div>
+        <!-- /ctrl-secondary -->
+
+      </article>
+      <!-- /primary-card -->
+
+      <!-- ───────────────────────────────────────────
+         OTHER TABS SECTION
+         hidden entirely when no other tabs have media
+    ─────────────────────────────────────────────── -->
+      <section id="other-tabs-section" class="other-tabs-section" aria-label="Other tabs with media" hidden>
+
+        <div class="ot-header">
+          <div class="ot-heading">
+            Other tabs
+            <span id="ot-count" class="ot-count" aria-live="polite">0</span>
+          </div>
+          <button id="btn-pause-all" class="ot-pause-all-btn">Pause all</button>
+        </div>
+
+        <!--
+        List of compact other-tab cards.
+        Play/pause button is ALWAYS the first flex child — flexbox guarantees
+        it never shifts regardless of thumbnail availability.
+      -->
+        <ul id="ot-list" class="ot-list" role="list"></ul>
+
+      </section>
+
+    </div>
+    <!-- /view-active -->
+
+  </div>
+  <!-- /app -->
+  <script src="popup.js" type="module"></script>
+</body>
+
+</html>
