@@ -1,6 +1,6 @@
 # 🚀 StreamLine: The Ultimate Browser Media Hub
 <p align="center">
-  <img src="./icons/icon128.png" alt="ZenTab Icon" width="100">
+  <img src="./assets/icons/icon128.png" alt="ZenTab Icon" width="100">
 </p>
 
 **StreamLine** is a premium, high-performance Chrome Extension designed to unify and elevate your media consumption experience. Built with a sleek **Glassmorphism UI**, it allows you to manage every audio and video stream across your entire browser from a single, beautiful interface.
