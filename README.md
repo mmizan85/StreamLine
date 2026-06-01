@@ -98,7 +98,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ### 👨‍💻 Developed By
 
-Mohammad Mizanur Rahman Professional Computer Lab Assistant & Full-Stack Enthusiast Github: [mizanur-rahman](https://github.com/mmizan85/)
+Mohammad Mizanur Rahman Professional Computer Lab Assistant & Full-Stack Enthusiast Github: [Mohammod Mizan](https://github.com/mmizan85/)
 
 ---
 *Note: StreamLine is a work in progress. Some features may be in development or require further testing. Please report any issues you encounter.*
